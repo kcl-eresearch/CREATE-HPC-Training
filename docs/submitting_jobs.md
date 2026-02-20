@@ -200,26 +200,6 @@ sacct -j 13378473 --format=ReqMem,AllocNodes,AllocCPUS,NodeList,JobID,Elapsed,St
 
 For the list of available options please see the job accounting fields in the [`sacct`](https://slurm.schedmd.com/sacct.html) documentation.
 
-!!!tip "Check how efficiently your job used its resources"
-    `sacct` can be used to check how efficiently your job used the resources you requested.
-    For example, you can use the option `--format=JobID,JobName,Timelimit,Elapsed,CPUTime,ReqCPUS,NCPUS,ReqMem,MaxRSS`
-    to get information on the maximum memory usage, total elapsed time, and CPU time used by your job.
-
-    ```bash
-    k1234567@erc-hpc-login1:~$ sacct -j 8328 --format=JobID,JobName,Timelimit,Elapsed,CPUTime,ReqCPUS,NCPUS,ReqMem,MaxRSS
-    JobID           JobName  Timelimit    Elapsed    CPUTime  ReqCPUS      NCPUS     ReqMem     MaxRSS
-    ------------ ---------- ---------- ---------- ---------- -------- ---------- ---------- ----------
-    8328           hellowor   00:02:00   00:00:07   00:00:28        4          4         2G
-    8328.ba+          batch              00:00:07   00:00:28        4          4               325772K
-    ```
-
-    The example job above requested 2GB of memory but only used about 0.33 GB, and requested up to 2 minutes but only took 7 seconds.
-
-    You should look at resource usage of your jobs and use this to guide the resources you request for similar jobs in the future.
-    Jobs that request lower resources will likely be scheduled faster.
-    Requesting only the resources you need also ensures that the HPC resources are used efficiently.
-    Requesting more CPUs or memory than you need can stop other people's jobs running and lead to significant HPC resources sitting idle.
-
 ## Cancelling jobs
 
 You can cancel running, or queued job using [`scancel`](https://slurm.schedmd.com/scancel.html) utility. You can cancel
@@ -530,3 +510,51 @@ A sample output would be:
 ## Exercises - parallel jobs and benchmarking
 
 Work through the exercises in [this section](exercises.md/#job-submission-part-2) to practice submitting parallel jobs, and [this section](exercises.md/#job-submission-part-3) to look at optimisation and benchmarking.
+
+## Responsible use of resources
+
+It's important to request the appropriate amount of resources for your jobs.
+Requesting more resources will typically lead to your jobs waiting longer in the queue, so requesting more resources than you need can slow down your work.
+It also leads to those resources sitting idle rather than being effectively used by someone else.
+Making appropriate resource requests is good HPC citizenship and leads to fairer sharing of resources across all users.
+
+Ensuring resources are used effectively and don't sit idle is also one of the key principles of sustainable computing, as defined by the [Green Software Foundation](https://greensoftware.foundation/). As funders and research institutions set Net Zero goals, and computationally-intensive research expands, sustainability is increasingly becoming a concern for researchers.
+Producing computing hardware is a resource-intensive process that impacts the environment through both carbon emissions and the extraction of raw materials.
+Therefore, we have a responsibility to make the best use of existing hardware before expanding by buying new hardware.
+By using HPC resources effectively, you can contribute to making computational research more sustainable.
+
+!!! tip "Green computing"
+
+    To find out more about sustainable computing, visit the [e-Research Sustainable Computing docs](https://docs.er.kcl.ac.uk/green-computing/) page, the [Green DiSC](https://www.software.ac.uk/GreenDiSC) website or see this [online training](https://learn.greensoftware.foundation/) from the Green Software Foundation.
+
+### Checking resource usage
+
+You can look at the resource usage of your past jobs and use this to guide the resources you request for similar jobs in the future.
+
+Slurm's `sacct` command can be used to check resource usage.
+For example, you can use the option `--format=JobID,JobName,Timelimit,Elapsed,CPUTime,ReqCPUS,NCPUS,ReqMem,MaxRSS`
+to get information on the maximum memory usage, total elapsed time, and CPU time used by your job.
+
+```bash
+k1234567@erc-hpc-login1:~$ sacct -j 8328 --format=JobID,JobName,Timelimit,Elapsed,CPUTime,ReqCPUS,NCPUS,ReqMem,MaxRSS
+JobID           JobName  Timelimit    Elapsed    CPUTime  ReqCPUS      NCPUS     ReqMem     MaxRSS
+------------ ---------- ---------- ---------- ---------- -------- ---------- ---------- ----------
+8328           hellowor   00:02:00   00:00:07   00:00:28        4          4         2G
+8328.ba+          batch              00:00:07   00:00:28        4          4               325772K
+```
+
+The example job above requested 2GB of memory but only used about 0.33 GB, and requested up to 2 minutes but only took 7 seconds.
+
+The `seff` command is a new tool that returns job resource efficiency information in a more compact and interpretable format,
+but doesn't have as much flexibility as `sacct`.
+
+```bash
+k1234567@erc-hpc-login1:~$ seff 123456
+Job ID: 123456
+User: k1234567
+State: COMPLETED
+Elapsed time: 10:43:19
+GPU(s) allocated: none
+CPU Efficiency: 95.4% of 6 core(s) used
+Memory Efficiency: 1.3% of 6000 MB used
+```
