@@ -590,6 +590,11 @@ It's sensible to add a small buffer (10-20%) to previous memory usage to allow f
 For example, if a previous job used 8.3GB of memory, it would be sensible to request 10GB.
 You can also start with a high amount of memory and check the actual usage using `sacct` or `seff` to adjust for future jobs.
 
+!!! Exercise
+    Look at the example jobs in the "Checking resource usage" section above.
+    Did these jobs use all the resources they requested?
+    If not, how would you adjust the resource requests to be more appropriate?
+
 ### Other responsible HPC usage considerations
 
 Responsible HPC usage can also involve:
