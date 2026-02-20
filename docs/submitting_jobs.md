@@ -558,3 +558,44 @@ GPU(s) allocated: none
 CPU Efficiency: 95.4% of 6 core(s) used
 Memory Efficiency: 1.3% of 6000 MB used
 ```
+
+### Choosing resources
+
+The number of CPUs you request from Slurm should match the number of CPUs you use in your code/command.
+
+For example, the script below requests 16 CPUs, but the `sharpen` command is only using 8 CPUs (`-p 8` option).
+16 CPUs will be allocated, but only 8 will be used!
+
+```bash
+#SBATCH --job-name=sharpen
+#SBATCH --partition=cpu
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH -t 0-0:10 # time (D-HH:MM)
+
+sharpen -p 8 myfile.tiff outfile.tiff
+```
+
+Check the documentation for the software or programming language you're using to find out how to ensure your script uses all the requested CPUs.
+
+Increasing the number of CPUs used for a task doesn't always lead to a linear increase in speed.
+For example, using 2 CPUs instead of 1 might make your task twice as fast, but using 8 instead of 2 might only make it 3x as fast, not 4x.
+If you scale up the number of CPUs used for a task, you should check that the job is still using those CPUs efficiently.
+For more on this topic, see the [optimisation and benchmarking exercises](exercises.md/#job-submission-part-3).
+
+Memory requirements can vary depending on the input to a command, which can make them harder to estimate.
+It may take some trial and error to find the right amount of memory to request.
+You can use previous jobs as a guide, or ask colleagues who have run similar jobs.
+It's sensible to add a small buffer (10-20%) to previous memory usage to allow for variation between jobs.
+For example, if a previous job used 8.3GB of memory, it would be sensible to request 10GB.
+You can also start with a high amount of memory and check the actual usage using `sacct` or `seff` to adjust for future jobs.
+
+### Other responsible HPC usage considerations
+
+Responsible HPC usage can also involve:
+
+* Running tests on small datasets to ensure your code works correctly before scaling up your resource requests
+* Planning before you submit big jobs, to ensure the approach you're taking is the right way to address your research questions
+* Keeping your data tidy and deleting large files you no longer need
+* Documenting your work so you know what you did and don't need to re-run code unnecessarily
+* Sharing code, data, and usage tips with your colleagues so you can learn from each other
