@@ -73,6 +73,11 @@ you should be able to connect to the login nodes using the following command, re
 ssh k1234567@hpc.create.kcl.ac.uk
 ```
 
+When using PowerShell on Windows, you might see the error message “Corrupted MAC on input.” In this case, use the following command instead:
+```bash
+ssh -m hmac-sha2-512 k1234567@hpc.create.kcl.ac.uk
+```
+
 You should see something similar to
 
 ```text
